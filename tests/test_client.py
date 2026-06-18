@@ -1,17 +1,12 @@
-"""
-Tests for the JunubSMS Python client.
+#Tests for the JunubSMS Python client.
 
-All HTTP calls are mocked — no real network requests are made.
-Run with: pytest
-"""
 import pytest
 from unittest.mock import MagicMock, patch
 
 from junubsms import JunubSMSClient, JunubSMSError
 from junubsms.models import SMSResult, DeliveryStatus, IncomingMessage, Contact
 
-
-# ── Fixtures ──────────────────────────────────────────────────────────────────
+#  Fixtures and helpers
 
 @pytest.fixture
 def client():
@@ -26,7 +21,7 @@ def mock_response(payload: dict) -> MagicMock:
     return resp
 
 
-# ── Client ────────────────────────────────────────────────────────────────────
+#  Client tests
 
 class TestClient:
     def test_creates_message_and_admin_resources(self, client):
@@ -52,7 +47,7 @@ class TestClient:
         assert exc_info.value.code == "ERR 100"
 
 
-# ── Messages ──────────────────────────────────────────────────────────────────
+#  Messages 
 
 class TestMessages:
     def test_send_returns_sms_results(self, client):
@@ -60,6 +55,7 @@ class TestMessages:
             "data": [{"status": "OK", "error": "0", "smslog_id": "42", "queue": "abc", "to": "0912345678"}],
             "error_string": None,
         }
+        
         client._session.get = MagicMock(return_value=mock_response(payload))
         results = client.messages.send(to="0912345678", msg="Hello!")
 
@@ -115,7 +111,7 @@ class TestMessages:
         assert info.balance == "500.00"
 
 
-# ── Admin ─────────────────────────────────────────────────────────────────────
+#  Admin tests
 
 class TestAdmin:
     def test_add_account_calls_correct_op(self, client):
@@ -147,8 +143,7 @@ class TestAdmin:
         client.admin.unban_account("bob")
         assert client._session.get.call_args[1]["params"]["op"] == "accountunban"
 
-
-# ── Exceptions ────────────────────────────────────────────────────────────────
+#  Exceptions 
 
 class TestExceptions:
     def test_error_message_from_known_code(self):
