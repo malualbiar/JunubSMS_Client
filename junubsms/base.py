@@ -37,8 +37,11 @@ class BaseResource:
 
     def _check_for_errors(self, data: Any) -> None:
         #Raise JunubSMSError if the response contains an error code.
-       
-        if isinstance(data, dict):
-            error = data.get("error_string") or data.get("status", "")
-            if isinstance(error, str) and error.startswith("ERR"):
-                raise JunubSMSError(code=error)
+
+        if not data:
+            raise JunubSMSError("ERR 501")
+
+        error_code = data.get("error_string")
+
+        if isinstance(error_code, str) and error_code.startswith("ERR"):
+            raise JunubSMSError(error_code)

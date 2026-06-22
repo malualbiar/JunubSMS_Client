@@ -41,7 +41,6 @@ ERROR_MESSAGES = {
     "ERR 626": "Failed to set login key",
 }
 
-
 class JunubSMSError(Exception):
     #Raised when the API returns an error code
 
